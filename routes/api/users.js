@@ -67,7 +67,7 @@ router.post(
                 res.json({token})
             }
         )
-        res.send('User route');
+        // res.send('User route');
         
     } catch (error) {
         console.error(error.message);
