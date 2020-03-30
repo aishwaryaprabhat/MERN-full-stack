@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const gravatar = require('gravatar')
+const bcrypt  = require('bcryptjs')
 const {check, validationResult} = require('express-validator/check')
 const User = require('../../models/Users')
 
@@ -30,15 +31,26 @@ router.post(
         let user = await User.findOne({email})
 
         if (user) {
-            res.status(400).json({errors: [{msg: 'User already exixsts'}]});
+            return res.status(400).json({errors: [{msg: 'User already exixsts'}]});
         }
 
-    //Get users gravatar
+        //Get users gravatar
+        const avatar = gravatar.url(email, {
+            s: '200',
+            r: 'pg',
+            d: 'mm'
+        })
 
-    //Encrypt password
+        user = new User({
+            name, email, avatar, password
+        })
+        //Encrypt password
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(password, salt);
+        await user.save();
 
-    //Return jsonwebtoken
-    res.send('User route');
+        //Return jsonwebtoken
+        res.send('User route');
         
     } catch (error) {
         console.error(error.message);
