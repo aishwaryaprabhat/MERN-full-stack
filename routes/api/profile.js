@@ -171,7 +171,7 @@ router.delete(
             res.status(500).send(error.message)
         }
     }
-)
+);
 
 
 
@@ -204,6 +204,104 @@ router.put(
             if (!profile) return res.status(400).json({msg: 'No profile for this user'});
 
             profile.experience.unshift(newExp);
+            await profile.save();
+            res.json(profile)
+        } catch (error) {
+            console.log(error)
+            res.status(500).send(error.message)
+        }
+    }
+)
+
+
+//@route DELETE api/profile/experience/:exp_id
+//@desc Delete experience
+//@access Private
+
+router.delete(
+    "/experience/:exp_id",
+    auth,
+    async (req, res)=> {
+
+
+        try {
+            const profile = await Profile.findOne({user: req.user.id});
+            if (!profile) return res.status(400).json({msg: 'No profile for this user'});
+
+            //Get remove index
+            const removeIndex  = profile.experience.map(item=>item.id).indexOf(req.params.exp_id)
+
+            profile.experience.splice(removeIndex, 1);
+
+            await profile.save();
+            res.json(profile)
+        } catch (error) {
+            console.log(error)
+            res.status(500).send(error.message)
+        }
+    }
+);
+
+//@route PUT api/profile/education
+//@desc Update education
+//@access Private
+
+router.put(
+    "/education",
+    auth,
+    [
+        check('fieldofstudy', "Field of study is required").not().isEmpty(),
+        check('degree', "Degree is required").not().isEmpty(),
+        check('school', "School is required").not().isEmpty(),
+        check('from', "From date is required").not().isEmpty(),
+        check('to', "To date is required").not().isEmpty()
+    ],
+    async (req, res)=> {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({errors: errors.array()});
+        }
+
+        const {fieldofstudy, degree, school, location, from, to, current, description} = req.body
+
+        const newEdu = {
+            fieldofstudy, degree, school, location, from, to, current, description
+        }
+
+        try {
+            const profile = await Profile.findOne({user: req.user.id});
+            if (!profile) return res.status(400).json({msg: 'No profile for this user'});
+
+            profile.education.unshift(newEdu);
+            await profile.save();
+            res.json(profile)
+        } catch (error) {
+            console.log(error)
+            res.status(500).send(error.message)
+        }
+    }
+);
+
+
+//@route DELETE api/profile/education/:education_id
+//@desc Delete education
+//@access Private
+
+router.delete(
+    '/education/:education_id',
+    auth,
+    async (req, res)=> {
+
+
+        try {
+            const profile = await Profile.findOne({user: req.user.id});
+            if (!profile) return res.status(400).json({msg: 'No profile for this user'});
+            console.log(profile)
+            //Get remove index
+            const removeIndex  = profile.education.map(item=>item.id).indexOf(req.params.education_id)
+
+            profile.education.splice(removeIndex, 1);
+
             await profile.save();
             res.json(profile)
         } catch (error) {
