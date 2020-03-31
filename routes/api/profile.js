@@ -97,7 +97,7 @@ router.post(
             //Create
             profile = new Profile(profileFields)
 
-            await Profile.save();
+            await profile.save();
             res.json(profile)
 
             
