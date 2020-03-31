@@ -59,7 +59,7 @@ router.get(
     async (req, res)=>{
 
         try {
-            const posts = await Post.find().sort({date: -1}).populate('user', ['name', 'avatar']);
+            const posts = await Post.find().sort({date: -1});
             res.json(posts)
 
         } catch (error) {
