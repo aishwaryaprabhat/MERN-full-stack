@@ -81,10 +81,38 @@ router.get(
     async (req, res)=>{
 
         try {
-            const post = await Post.findById(req.params.id)
+            const post = await Post.findById(req.params.id);
             if (!post) return res.status(400).json({msg: 'No posts for this user'})
             res.json(post)
 
+        } catch (error) {
+            console.log(error)
+            res.status(500).send('Server Error')
+        }
+        
+    }
+)
+
+
+//@route DELTE api/posts/:id
+//@desc Delete post by id
+//@access Private
+
+router.delete(
+    "/:id",
+    auth,
+    async (req, res)=>{
+
+        try {
+            const post = await Post.findById(req.params.id);
+            if (!post) return res.status(400).json({msg: 'No posts for this user'})
+
+            //Check user
+            if(post.user.toString()!==req.user.id){
+                return res.status(401).json({msg: 'User not authorized'})
+            }
+            await post.remove();
+            res.json('Post Deleted')
         } catch (error) {
             console.log(error)
             res.status(500).send('Server Error')
