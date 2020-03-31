@@ -127,7 +127,27 @@ router.get(
     }
 )
 
+//@route GET api/profile/:user_id
+//@desc Get all profile by user ID
+//@access Public
 
+router.get(
+    "/user/:user_id",
+    async (req, res)=>{
+        try {
+            const profile = await Profile.findOne({user: req.params.user_id}).populate('user', ['name', 'avatar'])
+
+            if (!profile) return res.statur(400).json({msg: 'No profile for this user'})
+            res.json(profile)
+        } catch (error) {
+            console.log(error.message)
+            if (error.kind=='OnjectId'){
+                return res.statur(400).json({msg: 'No profile for this user'})
+            }
+            res.status(500).send(error.message)
+        }
+    }
+)
 
 
 
