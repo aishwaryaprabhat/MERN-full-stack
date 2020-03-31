@@ -120,4 +120,33 @@ router.delete(
         
     }
 )
+
+
+//@route PUT api/posts/like/:id
+//@desc Like a post
+//@access Private
+
+router.put(
+    '/like/:id',
+    auth,
+    async (req, res)=>{
+        try {
+            const post = await Post.findById(req.params.id);
+            if (!post) return res.status(400).json({msg: 'Post not found'})
+
+            //Check user has not liked this before
+            if(post.likes.filter(like=>like.user.toString()===req.user.id).len>0){
+                return res.status(400).json({msg: 'User has liked by this user'})
+            }
+            
+            post.likes.unshift({user: req.user.id});
+            await post.save
+            res.json(post.likes)
+        } catch (error) {
+            console.log(error)
+            res.status(500).send('Server Error')
+        }
+    }
+
+)
 module.exports = router;
