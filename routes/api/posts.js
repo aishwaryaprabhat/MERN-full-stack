@@ -105,7 +105,7 @@ router.delete(
 
         try {
             const post = await Post.findById(req.params.id);
-            if (!post) return res.status(400).json({msg: 'No posts for this user'})
+            if (!post) return res.status(400).json({msg: 'Post not found'})
 
             //Check user
             if(post.user.toString()!==req.user.id){
