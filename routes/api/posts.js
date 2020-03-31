@@ -69,4 +69,27 @@ router.get(
         
     }
 )
+
+
+//@route GET api/posts/:id
+//@desc Get post by id
+//@access Private
+
+router.get(
+    "/:id",
+    auth,
+    async (req, res)=>{
+
+        try {
+            const post = await Post.findById(req.params.id)
+            if (!post) return res.status(400).json({msg: 'No posts for this user'})
+            res.json(post)
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).send('Server Error')
+        }
+        
+    }
+)
 module.exports = router;
