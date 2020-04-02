@@ -1,9 +1,11 @@
 import React, {useState, Fragment} from 'react';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types'
+import {login} from '../../actions/auth'
 
-
-const Login = () => {
+const Login = ({login}) => {
 const [formData, setFormData] = useState(
     {
         email: '',
@@ -15,26 +17,26 @@ const [formData, setFormData] = useState(
 
     const onSubmit = async e => {
         e.preventDefault();
-        
-        console.log('Passwords dont match');
+        login(email, password)
+        // console.log('Passwords dont match');
 
-        const newUser = {
-            email,
-            password
-        }
-        try {
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-            const body = JSON.stringify(newUser);
+        // const newUser = {
+        //     email,
+        //     password
+        // }
+        // try {
+        //     const config = {
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         }
+        //     }
+        //     const body = JSON.stringify(newUser);
 
-            const res = await axios.post('/api/users', body, config);
-            console.log(res.data);
-        } catch (error) {
-            console.error(error.response.data)
-        }
+        //     const res = await axios.post('/api/users', body, config);
+        //     console.log(res.data);
+        // } catch (error) {
+        //     console.error(error.response.data)
+        // }
 
     
     }
@@ -72,4 +74,7 @@ const [formData, setFormData] = useState(
     );
 }
 
-export default Login
+Login.propTypes = {
+  login: PropTypes.func.isRequired,
+}
+export default connect(null, {login})(Login)
